@@ -25,14 +25,21 @@ pr_allsoils <- PrcsDat(allsoils)
 soilRowMean <- cbind(pr_allsoils[ ,-grep("SoilTemp10", names(pr_allsoils))], 
                      'SoilTemp10' = rowMeans(pr_allsoils[ ,grep("SoilTemp10", names(pr_allsoils))], na.rm = TRUE))
 
-head(soilRowMean)
+soilMlt <- melt(soilRowMean, id = c("DateTime", "Date", "RECORD", "Source", "Chamber", "temp"))
 
-soilMlt <- melt(soilRowMean, id = c("DateTime", "Date", "RECORD", "Date", "Source", "Chamber", "temp"))
-
-soilMlt <- melt(te, id = c("DateTime", "Date", "RECORD", "Date", "Source", "Chamber", "temp"))
+# remove NA in value
+soilMlt <- soilMlt[complete.cases(soilMlt$value), ]
+soilMlt <- droplevels(soilMlt) 
 
 # Daily mean
-DayChmMean <- ddply(soilRowMean, .(Date, Chamber, temp), colSmryDF)
+DayChmMean <- ddply(soilMlt, .(Date, Chamber, temp, variable), summarise, 
+                    Mean = mean(value, na.rm = TRUE),
+                    Min = min(value, na.rm = TRUE),
+                    Max = max(value, na.rm = TRUE), .progress = "text")
+summary(DayChmMean)
+?ddply
+
+head(DayChmMean)
 save(DayChmMean, file = "Output/Data/WTC_soilMoistTemp_Chamber_DailyMean.RData")
 
 DayTrtMean <- ddply(DayChmMean, .(Date, temp), colMeanDF)
