@@ -88,20 +88,13 @@ save(soilTrtSmry, file = "Output/Data/WTC_soilMoistTemp_TempTrt_DailySummary.RDa
 ########
 # Figs #
 ########
-# surface moisture & temperature
 unique(soilTrtSmry$variable)
 theme_set(theme_bw())
 
-
+############
+# Moisture #
+############
 # surface moisture
-PltMoist <- function(data, ylab){
-  data <- droplevels(data)
-  p <- ggplot(data, aes(x = Date, y = Mean, col = temp))
-  p + geom_line()+
-    scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
-    labs(x = "Time", y = ylab)
-}
-
 PltMoist(data = subset(soilTrtSmry, variable == "SoilVW_5_25"), 
                  ylab = "Soil moisture at 5-25 cm\n(% of volumetric water content)")
 
@@ -115,42 +108,14 @@ PltMoist(data = soilTrtSmry[grep("SoilVW", soilTrtSmry$variable), ],
          ylab = "Soil moisture\n(% of volumetric water content)") + 
   facet_grid(variable ~., labeller= ylab_label)
 
-
-p <- ggplot(subset(soilTrtSmry, variable == "SoilVW_5_25"), aes(x = Date, y = Mean, col = temp))
-p + geom_line()+
-  scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
-  labs(x = "Time", y = "Soil moisture at 5-25 cm\n(% of volumetric water content)") # \n: new line
-
+###############
+# Temperature #
+###############
 # surface temperature
-p <- ggplot(subset(soilTrtSmry, variable == "SoilTemp10"), aes(x = Date, y = Mean, col = temp, fill = temp))
-p + geom_line()+
-  geom_ribbon(aes(ymin = Min, ymax = Max), 
-              col = NA, alpha = 0.2) + # col=NA removes the border lines
-  scale_fill_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
-  scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
-  labs(x = "Time", y = expression(Soil~temperature~at~10~cm~(~degree~C)))
-
-# stratified moisture
-# labels for facet_grid
-ylabs <- list(
-  'SoilVW_5_25' = "5-25 cm",
-  'SoilVW_30_50' = "30-50 cm",
-  'SoilVW_HL' = "HL"
-)
-
-ylab_label <- function(variable, value){
-  return(ylabs[value])
-}
-
-p <- ggplot(soilTrtSmry[grep("SoilVW", soilTrtSmry$variable), ],
-                   aes(x = Date, y = Mean, col = temp))
-p + geom_line()+
-  scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
-  facet_grid(variable ~., labeller= ylab_label) + 
-  labs(x = "Time", y = "Soil moistur\n(% of volumetric water content)") 
+PltTemp(data = subset(soilTrtSmry, variable == "SoilTemp10"), 
+        ylab = expression(Soil~temperature~at~10~cm~(~degree~C)))
 
 # stratified temperature
-unique(soilTrtSmry$variable)
 ylabs <- list(
   'Temp5' = "5 cm",
   'Temp10' = "10 cm",
@@ -160,16 +125,8 @@ ylabs <- list(
   'Temp100' = "100 cm"
   )
 
-tempDF <- droplevels(soilTrtSmry[grep("^Temp", soilTrtSmry$variable), ]) 
-# when one use [] to subset a data frame, ggplot can't remove empty levels properly for labelling 
-# (it still works but you can't add ylabs as you wish), so remove empty levels
-
-p <- ggplot(tempDF, aes(x = Date, y = Mean, col = temp, fill = temp))
-p + geom_line()+
-  geom_ribbon(aes(ymin = Min, ymax = Max), 
-              col = NA, alpha = 0.2) + # col=NA removes the border lines
-  scale_fill_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
-  scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
-  facet_grid(variable ~., labeller= ylab_label) + 
-  labs(x = "Time", y = expression(Soil~temperature~at~10~cm~(~degree~C)))
+PltTemp(data = soilTrtSmry[grep("^Temp", soilTrtSmry$variable), ],
+        ylab = expression(Soil~temperature~(~degree~C))) +
+  facet_grid(variable ~., labeller= ylab_label)   
+  
 

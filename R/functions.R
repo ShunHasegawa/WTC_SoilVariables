@@ -68,4 +68,27 @@ ylab_label <- function(variable, value){
   return(ylabs[value])
 }
 
+######################
+# plot soil moisture #
+######################
+PltMoist <- function(data, ylab){
+  data <- droplevels(data)
+  p <- ggplot(data, aes(x = Date, y = Mean, col = temp))
+  p + geom_line()+
+    scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
+    labs(x = "Time", y = ylab)
+}
 
+#########################
+# plot soil temperature #
+#########################
+PltTemp <- function(data, ylab){
+  data <- droplevels(data)
+  p <- ggplot(data, aes(x = Date, y = Mean, col = temp, fill = temp))
+  p + geom_line()+
+    geom_ribbon(aes(ymin = Min, ymax = Max), 
+                col = NA, alpha = 0.2) + # col=NA removes the border lines
+    scale_fill_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
+    scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
+    labs(x = "Time", y = ylab)
+}
