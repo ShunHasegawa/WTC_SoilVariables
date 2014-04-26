@@ -103,6 +103,7 @@ p + geom_line()+
 
 
 
+
 ?facet_grid
 a <- 
 levels(a$variable)
