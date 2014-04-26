@@ -109,5 +109,16 @@ p + geom_line()+
   labs(x = "Time", y = expression(Soil~temperature~at~10~cm~(~degree~C)))
 
 # stratified moisture
+names(soilTrtSmry)
+p <- ggplot(soilTrtSmry[grep("SoilVW", soilTrtSmry$variable), ],
+                   aes(x = Date, y = Mean, col = temp))
+p + geom_line()+
+  scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
+  facet_grid(variable ~., scales = "free_y") + 
+  labs(x = "Time", y = "Soil moistur\n(% of volumetric water content)") # \n: new line
+
+
+
+
 # stratified temperature
 
