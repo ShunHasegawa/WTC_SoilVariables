@@ -31,16 +31,7 @@ ToTemp <- PltTemp(data = subset(soilTrtSmry, variable == "SoilTemp10"),
 ggsave(filename= "Output//Figs/WTC_SoilTemp10cm.pdf", plot = ToTemp, width = 6, height = 3)
 
 # stratified temperature
-ylabs <- list(
-  'Temp5' = "5 cm",
-  'Temp10' = "10 cm",
-  'Temp20' = "20 cm",
-  'Temp30' = "30 cm",
-  'Temp50' = "50 cm",
-  'Temp100' = "100 cm"
-)
-
 TempDifDep <- PltTemp(data = soilTrtSmry[grep("^Temp", soilTrtSmry$variable), ],
                       ylab = expression(Soil~temperature~(~degree~C)), size = 0.1) +
-  facet_grid(variable ~., labeller= ylab_label)   
+  facet_wrap(~variable, ncol = 2)   
 ggsave(filename= "Output//Figs/WTC_SoilTmpDepths.pdf", plot = TempDifDep, width = 6, height = 8)  
