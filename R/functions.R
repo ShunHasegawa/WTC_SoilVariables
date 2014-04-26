@@ -61,3 +61,11 @@ PltAllSoil <- function(data, filename){
   dev.off()
 }
 
+##########################################
+# produce ylabs for ggplot with faceting #
+##########################################
+ylab_label <- function(variable, value){
+  return(ylabs[value])
+}
+
+
