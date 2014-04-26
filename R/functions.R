@@ -82,10 +82,10 @@ PltMoist <- function(data, ylab){
 #########################
 # plot soil temperature #
 #########################
-PltTemp <- function(data, ylab){
+PltTemp <- function(data, ylab, ...){
   data <- droplevels(data)
   p <- ggplot(data, aes(x = Date, y = Mean, col = temp, fill = temp))
-  p + geom_line()+
+  p + geom_line(...)+
     geom_ribbon(aes(ymin = Min, ymax = Max), 
                 col = NA, alpha = 0.2) + # col=NA removes the border lines
     scale_fill_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
