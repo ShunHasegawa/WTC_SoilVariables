@@ -85,41 +85,7 @@ save(soilChmSmry, file = "Output/Data/WTC_soilMoistTemp_Chamber_DailySummary.RDa
 soilTrtSmry <- ddply(soilChmSmry, .(Date, temp, variable), function(x) colMeans(x[,c("Mean", "Min", "Max")], na.rm = TRUE))
 save(soilTrtSmry, file = "Output/Data/WTC_soilMoistTemp_TempTrt_DailySummary.RData")
 
-
-
-
-
-
-
-
-# Daily mean
-DayChmMean <- ddply(soilRowMean, .(Date, Chamber, temp), colSmryDF)
-  # infinit was produced as there some factors which have only NA values
-DayChmMean[sapply(DayChmMean, is.infinite)] <- NA
-save(DayChmMean, file = "Output/Data/WTC_soilMoistTemp_Chamber_DailyMean.RData")
-
-DayTrtMean <- ddply(DayChmMean, .(Date, temp), colSmryDF)
-head(DayTrtMean)
-save(DayTrtMean, file = "Output/Data/WTC_soilMoistTemp_Trt_DailyMean.RData")
-
 #############
 # plot temp #
 #############
-head(DayTrtMean )
-dfMlt <- melt(DayTrtMean, id = c("Date", "temp"))
-
-MinVa <- levels(dfMlt$variable)[grep("^min", levels(dfMlt$variable))]
-Maxva <- levels(dfMlt$variable)[grep("^max", levels(dfMlt$variable))]
-
-dfMlt$type <- factor(ifelse(dfMlt$variable %in% MinVa, "min", 
-                           ifelse(dfMlt$variable %in% Maxva, "max", "Mean")))
-
-
-test <- cast(dfMlt, Date + temp + variable ~ type)
-head(test)
-
-some(dfMlt)
-tmepMeanDF <- DayTrtMean[ ,c(1, 2, grep("^Temp", names(DayTrtMean)))]
-tmepMinDF <- DayTrtMean[ ,c(1, 2, grep("^min", names(DayTrtMean)))]
-tmepMaxDF <- DayTrtMean[ ,c(1, 2, grep("^max", names(DayTrtMean)))]
 
