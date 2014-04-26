@@ -85,7 +85,20 @@ save(soilChmSmry, file = "Output/Data/WTC_soilMoistTemp_Chamber_DailySummary.RDa
 soilTrtSmry <- ddply(soilChmSmry, .(Date, temp, variable), function(x) colMeans(x[,c("Mean", "Min", "Max")], na.rm = TRUE))
 save(soilTrtSmry, file = "Output/Data/WTC_soilMoistTemp_TempTrt_DailySummary.RData")
 
-#############
-# plot temp #
-#############
+########
+# Figs #
+########
+# surface moisture & temperature
+unique(soilTrtSmry$variable)
+
+p <- ggplot(soilTrtSmry[soilTrtSmry$variable %in% c("SoilVW_5_25", "SoilTemp10"), ],
+            aes(x = Date, y = Mean, col = temp))
+p + geom_line()+
+  facet_grid(variable ~., scales = "free_y")
+?facet_grid
+a <- 
+levels(a$variable)
+
+# stratified moisture
+# stratified temperature
 
