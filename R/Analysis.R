@@ -23,56 +23,84 @@ pr_allsoils <- PrcsDat(allsoils)
 
 summary(pr_allsoils)
 
+#########################
+# Identify weird values #
+#########################
 # there are some weirdvalues, let's identify
 # dataset is too huge to plot everything so make daily summary
-daySoil <- ddply(pr_allsoils, .(Date, Chamber), function(x) {
-  colMeans(x[, c("SoilVW_5_25", "SoilVW_30_50", "SoilVW_HL", "Temp5", 
-                 "Temp10", "Temp20", "Temp30", "Temp50", "Temp100",
-                 "SoilTemp10_1", "SoilTemp10_2")], na.rm = TRUE)
-}
-)
-
-
-pltVar <- function(variable){
-  p <- ggplot(daySoil, aes_string(x = "Date", y = variable, col = "Chamber"))
-  p + geom_point() +
-    scale_color_manual(values = palette())
-}
-
-mainlab <- names(daySoil)[-1:-2]
-theme_set(theme_bw()) 
-plst <- lapply(mainlab, pltVar)
-names(plst[[1]]$plot_env)
-pdf(file = "Output//Figs/AllPlot.pdf", width = 6, height = 5)
-l_ply(plst, print)
-dev.off()
-
-print(plst[[2]])$plot
-
-
-?ggsave
-
-
-
-
-
-
-# mean of SoilTemp10
-soilRowMean <- cbind(pr_allsoils[ ,-grep("SoilTemp10", names(pr_allsoils))], 
-                     'SoilTemp10' = rowMeans(pr_allsoils[ ,grep("SoilTemp10", names(pr_allsoils))], na.rm = TRUE))
-
-# Daily mean
-DayChmMean <- ddply(soilRowMean, .(Date, Chamber, temp), colSmryDF)
-summary(DayChmMean)
+daySoil <- ddply(pr_allsoils, .(Date, Chamber), VarColMean)
 
 palette(c("blue2", "goldenrod1", "firebrick2", "chartreuse4", "deepskyblue1", "darkorange1", 
           "darkorchid3", "darkgrey", "mediumpurple1", "orangered2", "chocolate", "burlywood3"))
+PltAllSoil(data = daySoil, filename= "Output/Figs/AllSoilVar.pdf")
 
+#######################
+# remove weird values #
+#######################
+# weird values are
+# Temp10 in Ch08 & 11
+CorrectSoil <- pr_allsoils
+CorrectSoil$Temp10[which(CorrectSoil$Chamber %in% c("08", "11"))] <- NA
 
+# Temp100 in Ch09
+CorrectSoil$Temp100[which(CorrectSoil$Chamber == "09")] <- NA
 
-?legend
+# Temp100 in Ch10 after March2014
+plot(Temp100 ~ Date, data = subset(pr_allsoils, Chamber == "10"))
+plot(Temp100 ~ Date, data = subset(pr_allsoils, Chamber == "10" & 
+                                     Date > as.Date("2014-02-01") & Date < as.Date("2014-02-10")))
+  # since 8th Feb 2014 this probe hasn't been working properly
+CorrectSoil$Temp100[which(CorrectSoil$Chamber == "10" & CorrectSoil$Date >= as.Date("2014-02-08"))] <- NA
 
+# SoilTemp10_1 till Feg2013
+plot(SoilTemp10_1 ~ Date, data = subset(pr_allsoils, Chamber == "05" & Date < as.Date("2013-02-01")))
+plot(SoilTemp10_1 ~ Date, data = subset(pr_allsoils, Chamber == "05" & Date < as.Date("2013-01-14")))
+abline(v = seq(as.Date("2013-01-07"), as.Date("2013-01-10"), by = "days"))
+  # this probe doesn't seem to have worked till 10th Jan 2013
+CorrectSoil$SoilTemp10_1[which(CorrectSoil$Chamber == "05" & CorrectSoil$Date <= as.Date("2013-01-10"))] <- NA
+
+# plot all variable with the new dataset
+DayCorrectSoil <- ddply(CorrectSoil, .(Date, Chamber), VarColMean)
+
+PltAllSoil(data = DayCorrectSoil, filename= "Output/Figs/AllSoilVar_updated.pdf")
+  # this looks fine so carry on with this dataset
+
+###########################
+#Daily Chamber & Trt mean #
+###########################
+# mean of SoilTemp10
+soilRowMean <- cbind(CorrectSoil[ ,-grep("SoilTemp10", names(CorrectSoil))], 
+                     'SoilTemp10' = rowMeans(CorrectSoil[ ,grep("SoilTemp10", names(CorrectSoil))], na.rm = TRUE))
+
+summary(soilRowMean)
+# Daily mean
+DayChmMean <- ddply(soilRowMean, .(Date, Chamber, temp), colSmryDF)
+  # infinit was produced as there some factors which have only NA values
+DayChmMean[sapply(DayChmMean, is.infinite)] <- NA
 save(DayChmMean, file = "Output/Data/WTC_soilMoistTemp_Chamber_DailyMean.RData")
 
-DayTrtMean <- ddply(DayChmMean, .(Date, temp), colMeanDF)
+DayTrtMean <- ddply(DayChmMean, .(Date, temp), colSmryDF)
+head(DayTrtMean)
 save(DayTrtMean, file = "Output/Data/WTC_soilMoistTemp_Trt_DailyMean.RData")
+
+#############
+# plot temp #
+#############
+head(DayTrtMean )
+dfMlt <- melt(DayTrtMean, id = c("Date", "temp"))
+
+MinVa <- levels(dfMlt$variable)[grep("^min", levels(dfMlt$variable))]
+Maxva <- levels(dfMlt$variable)[grep("^max", levels(dfMlt$variable))]
+
+dfMlt$type <- factor(ifelse(dfMlt$variable %in% MinVa, "min", 
+                           ifelse(dfMlt$variable %in% Maxva, "max", "Mean")))
+
+
+test <- cast(dfMlt, Date + temp + variable ~ type)
+head(test)
+
+some(dfMlt)
+tmepMeanDF <- DayTrtMean[ ,c(1, 2, grep("^Temp", names(DayTrtMean)))]
+tmepMinDF <- DayTrtMean[ ,c(1, 2, grep("^min", names(DayTrtMean)))]
+tmepMaxDF <- DayTrtMean[ ,c(1, 2, grep("^max", names(DayTrtMean)))]
+
