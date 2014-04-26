@@ -71,15 +71,29 @@ PltAllSoil(data = DayCorrectSoil, filename= "Output/Figs/AllSoilVar_updated.pdf"
 soilmlt <- melt(CorrectSoil, id = c("DateTime", "Date", "RECORD", "Source", "Chamber", "temp"), na.rm = TRUE)
 soilrang <- cast(soilmlt, Date + Chamber + temp ~ variable, range, na.rm = TRUE)
 
-smryDF <- function(data){
-  Mean <- mean(data$value, na.rm = TRUE)
-  a <- range(data$value, na.rm = TRUE)
-  data.frame(Mean, Min = a[1], Max = a[2])
+smryDF <- function(){
+  Mean <- mean(value, na.rm = TRUE)
+  a <- range(value, na.rm = TRUE)
+  return(Mean = Mean, Min = a[1], Max = a[2])
 }
 
 test <- ddply(soilmlt[c(1:1000000),], .(Date, Chamber, temp, variable), smryDF, .progress = "text")
 head(test)
 
+
+tst <- soilmlt %.% 
+  group_by(Date, Chamber, temp, variable) %.%
+  summarise(Mean = mean(value, na.rm = TRUE),
+            Min = min(value, na.rm = TRUE),
+            Max = max(value, na.rm = TRUE))
+
+
+tst <- soilmlt %.% 
+  group_by(Date, Chamber, temp, variable) %.%
+  summarise(smryDF)
+
+
+head(tst)
 # 
 
 
