@@ -18,9 +18,46 @@ PrcsDat <- function(data){
 ######################################
 # Column mean for required variables #
 ######################################
-colMeanDF <- function(data){
+VarColMean <- function(data){
+  colMeans(data[, c("SoilVW_5_25", "SoilVW_30_50", "SoilVW_HL", "Temp5", 
+                    "Temp10", "Temp20", "Temp30", "Temp50", "Temp100",
+                    "SoilTemp10_1", "SoilTemp10_2")], na.rm = TRUE)
+}
+
+#########################################
+# Column summary for required variables #
+#########################################
+colSmryDF <- function(data){
   a <- data[, c("SoilVW_5_25", "SoilVW_30_50", "SoilVW_HL", 
                 "Temp5", "Temp10", "Temp20", "Temp30", "Temp50", "Temp100", 
                 "SoilTemp10")]
-  colMeans(a, na.rm = TRUE)
+  means <- colMeans(a, na.rm = TRUE)
+  
+  TmpMin <- apply(a[, grep("Temp", names(a))], 2, min, na.rm = TRUE)
+  names(TmpMin) <- paste("min", names(TmpMin), sep = "_")
+  
+  TmpMax <- apply(a[, grep("Temp", names(a))], 2, max, na.rm = TRUE)
+  names(TmpMax) <- paste("max", names(TmpMax), sep = "_")
+  c(means, TmpMin, TmpMax)
 }
+
+######################
+# Plot all variables #
+######################
+# create a graph
+pltVar <- function(data, variable){
+  theme_set(theme_bw()) 
+  p <- ggplot(data, aes_string(x = "Date", y = variable, col = "Chamber"))
+  p + geom_point() +
+    scale_color_manual(values = palette())
+}
+
+# plot all and save
+PltAllSoil <- function(data, filename){
+  mainlab <- names(data)[-1:-2]
+  plst <- lapply(mainlab, function(x) pltVar(data, x))
+  pdf(file = filename, width = 6, height = 5)
+  l_ply(plst, print)
+  dev.off()
+}
+
