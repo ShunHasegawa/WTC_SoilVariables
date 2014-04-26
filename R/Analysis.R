@@ -90,14 +90,23 @@ save(soilTrtSmry, file = "Output/Data/WTC_soilMoistTemp_TempTrt_DailySummary.RDa
 ########
 # surface moisture & temperature
 unique(soilTrtSmry$variable)
+theme_set(theme_bw())
 
 p <- ggplot(soilTrtSmry[soilTrtSmry$variable %in% c("SoilVW_5_25", "SoilTemp10"), ],
-            aes(x = Date, y = Mean, col = temp))
+            aes(x = Date, y = Mean, col = temp, fill = temp))
 p + geom_line()+
-  facet_grid(variable ~., scales = "free_y")
+  geom_ribbon(aes(x = Date, ymin = Min, ymax = Max), col = NA, alpha = 0.3) + # col=NA removes the border lines
+  facet_grid(variable ~., scales = "free_y") + 
+  scale_fill_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
+  scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp"))
+
+
+
+
 ?facet_grid
 a <- 
 levels(a$variable)
+
 
 # stratified moisture
 # stratified temperature
