@@ -93,26 +93,20 @@ unique(soilTrtSmry$variable)
 theme_set(theme_bw())
 
 
+# surface moisture
 p <- ggplot(subset(soilTrtSmry, variable == "SoilVW_5_25"), aes(x = Date, y = Mean, col = temp))
 p + geom_line()+
-  scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp"))
+  scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
+  labs(x = "Time", y = "Soil moisture at 5-25 cm\n(% of volumetric water content)") # \n: new line
 
-
-
-p <- ggplot(soilTrtSmry, aes(x = Date, y = SoilVW_5_25, col = temp, fill = temp))
+# surface temperature
+p <- ggplot(subset(soilTrtSmry, variable == "SoilTemp10"), aes(x = Date, y = Mean, col = temp, fill = temp))
 p + geom_line()+
-  geom_ribbon(aes(x = Date, ymin = Min, ymax = Max), col = NA, alpha = 0.3) + # col=NA removes the border lines
-  facet_grid(variable ~., scales = "free_y") + 
+  geom_ribbon(aes(ymin = Min, ymax = Max), 
+              col = NA, alpha = 0.2) + # col=NA removes the border lines
   scale_fill_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
-  scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp"))
-
-
-
-
-?facet_grid
-a <- 
-levels(a$variable)
-
+  scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
+  labs(x = "Time", y = expression(Soil~temperature~at~10~cm~(~degree~C)))
 
 # stratified moisture
 # stratified temperature
