@@ -2,7 +2,6 @@ unique(soilTrtSmry$variable)
 
 palette(c("blue2", "goldenrod1", "firebrick2", "chartreuse4", "deepskyblue1", "darkorange1", 
           "darkorchid3", "darkgrey", "mediumpurple1", "orangered2", "chocolate", "burlywood3"))
-PltAllSoil(data = daySoil, filename= "Output/Figs/AllSoilVar.pdf")
 
 theme_set(theme_bw())
 
@@ -10,12 +9,12 @@ theme_set(theme_bw())
 # Moisture #
 ############
 # surface moisture
-PltMoist <- function(data, ylab, vals, legtitle, leglabel, colvar, legend.key.size, ...){
+PltMoist <- function(data, ylab, vals, legtitle, leglabel, colvar, ...){
   data <- droplevels(data)
   p <- ggplot(data, aes_string(x = "Date", y = "Mean", col = colvar))
   p + geom_line(...)+
     scale_color_manual(values = vals, name = legtitle, labels = leglabel) +
-    labs(x = "Time", y = ylab) +
+    labs(x = "Time", y = ylab)
 }
 
 TempTopMoist <- PltMoist(data = subset(soilTrtSmry, variable == "SoilVW_5_25"), 
@@ -25,16 +24,20 @@ TempTopMoist <- PltMoist(data = subset(soilTrtSmry, variable == "SoilVW_5_25"),
                      leglabel = c("Ambient", "eTemp"), 
                      colvar = "temp")
 
+
 ChamTopMoist <- PltMoist(data = subset(soilChmSmry, variable == "SoilVW_5_25"), 
                          ylab = "Soil moisture at 5-25 cm\n(% of volumetric water content)",
                          vals = palette(), 
                          legtitle = "Chamber", 
                          leglabel = paste("Ch", c(1:12), sep = "_"), 
                          colvar = "Chamber", 
-                         size = 0.3)
-
+                         size = 0.3) +
+  guides(color = guide_legend(keyheight = 0.8)) 
+  # in order to use "guides", the argument (i.e color this time) needs
+  # to bedefined in ggplot. e.g. size or fill or shape can't be used for this plot
+  
 ggsave(filename= "Output//Figs/WTC_Trt_SoilMoisture5_25cm.pdf", plot = TempTopMoist, width = 6, height = 3)
-ggsave(filename= "Output//Figs/WTC_Chamber_SoilMoisture5_25cm.pdf", plot = ChamTopMoist, width = 6, height = 4)
+ggsave(filename= "Output//Figs/WTC_Chamber_SoilMoisture5_25cm.pdf", plot = ChamTopMoist, width = 6, height = 3)
 
 # moisture at different depths
 ylabs <- list(
