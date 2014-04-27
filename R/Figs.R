@@ -82,7 +82,7 @@ TempDifDep <- PltTemp(data = soilTrtSmry[grep("^Temp", soilTrtSmry$variable), ],
                       ylab = expression(Soil~temperature~(~degree~C)), size = 0.1) +
   facet_wrap(~variable, ncol = 2) +
   theme(axis.text.x = element_text(size = 6))
-ggsave(filename= "Output//Figs/WTC_SoilTmpDepths.pdf", plot = TempDifDep, width = 6, height = 6)  
+ggsave(filename= "Output//Figs/WTC_Trt_SoilTmpDepths.pdf", plot = TempDifDep, width = 6, height = 6)  
 
 ## Chamber ##
 # top layer
