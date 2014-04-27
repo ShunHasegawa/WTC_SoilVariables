@@ -88,7 +88,7 @@ ggsave(filename= "Output//Figs/WTC_SoilTmpDepths.pdf", plot = TempDifDep, width 
 # top layer
 ChTopTemp <-  PltChTemp(subset(soilChmSmry, variable == "SoilTemp10")) +
   facet_grid( .~temp, ) +
-  guides(color = guide_legend(keyheight = 0.8)) +
+  guides(color = guide_legend(keyheight = 0.8, override.aes = list(size = 1))) +
   theme(axis.text.x = element_text(size = 6))
 
 ggsave(filename= "Output//Figs/WTC_Chamber_SoilTemp10cm.pdf", plot = ChTopTemp, width = 6, height = 3)
@@ -97,5 +97,8 @@ ggsave(filename= "Output//Figs/WTC_Chamber_SoilTemp10cm.pdf", plot = ChTopTemp, 
 ChDifDepTemp <- PltChTemp(data = soilChmSmry[grep("^Temp", soilChmSmry$variable), ],
                           FaceLab = paste(c(5, 10, 20, 30, 50, 100), "cm")) +
   facet_grid(variable ~ temp) +
-  theme(axis.text.x = element_text(size = 6))
+  theme(axis.text.x = element_text(size = 6)) +
+  guides(color = guide_legend(override.aes = list(size = 1)))
 ggsave(filename= "Output//Figs/WTC_Chamber_SoilTempDepths.pdf", plot = ChDifDepTemp, width = 6, height = 8)
+?geom_line
+?aes
