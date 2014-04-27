@@ -9,14 +9,6 @@ theme_set(theme_bw())
 # Moisture #
 ############
 # surface moisture
-PltMoist <- function(data, ylab, vals, legtitle, leglabel, colvar, ...){
-  data <- droplevels(data)
-  p <- ggplot(data, aes_string(x = "Date", y = "Mean", col = colvar))
-  p + geom_line(...)+
-    scale_color_manual(values = vals, name = legtitle, labels = leglabel) +
-    labs(x = "Time", y = ylab)
-}
-
 TempTopMoist <- PltMoist(data = subset(soilTrtSmry, variable == "SoilVW_5_25"), 
                      ylab = "Soil moisture at 5-25 cm\n(% of volumetric water content)",
                      vals = c("blue", "red"), 
@@ -31,8 +23,10 @@ ChamTopMoist <- PltMoist(data = subset(soilChmSmry, variable == "SoilVW_5_25"),
                          legtitle = "Chamber", 
                          leglabel = paste("Ch", c(1:12), sep = "_"), 
                          colvar = "Chamber", 
-                         size = 0.3) +
-  guides(color = guide_legend(keyheight = 0.8)) 
+                         size = 0.3,
+                         aes_string(linetype = "Chamber")) +
+  guides(color = guide_legend(keyheight = 0.8)) +
+  scale_linetype_manual("Chamber", values = rep(c("solid", "dashed"), 6), labels = paste("Ch", c(1:12), sep = "_"))
   # in order to use "guides", the argument (i.e color this time) needs
   # to bedefined in ggplot. e.g. size or fill or shape can't be used for this plot
   
@@ -43,19 +37,42 @@ ggsave(filename= "Output//Figs/WTC_Chamber_SoilMoisture5_25cm.pdf", plot = ChamT
 ylabs <- list(
   'SoilVW_5_25' = "5-25 cm",
   'SoilVW_30_50' = "30-50 cm",
-  'SoilVW_HL' = "HL"
+  'SoilVW_HL' = "HL",
+  'amb' = "Ambient",
+  'elev' = "eTemp"
 )
+unique(soilChmSmry$temp)
+## Temp trt ##
 MoistDifDep <- PltMoist(data = soilTrtSmry[grep("SoilVW", soilTrtSmry$variable), ],
-                        ylab = "Soil moisture\n(% of volumetric water content)") + 
+                        ylab = "Soil moisture\n(% of volumetric water content)",
+                        vals = c("blue", "red"),
+                        legtitle = "Temp trt",
+                        leglabel = c("Ambient", "eTemp"), 
+                        colvar = "temp") + 
   facet_grid(variable ~., labeller= ylab_label)
 
-ggsave(filename= "Output//Figs/WTC_SoilMoistureDepths.pdf", plot = MoistDifDep, width = 6, height = 6)
+ggsave(filename= "Output//Figs/WTC_Trt_SoilMoistureDepths.pdf", plot = MoistDifDep, width = 6, height = 6)
+
+## Chamber ##
+ChMoistDifDep <- PltMoist(data = soilChmSmry[grep("SoilVW", soilChmSmry$variable), ],
+                        ylab = "Soil moisture\n(% of volumetric water content)",
+                        vals = palette(),
+                        legtitle = "Chamber",
+                        leglabel = paste("Ch", c(1:12), sep = "_"), 
+                        colvar = "Chamber",
+                        aes_string(linetype = "Chamber")) +                        
+  facet_grid(variable ~., labeller= ylab_label) +
+  scale_linetype_manual("Chamber", values = rep(c("solid", "dashed"), 6), labels = paste("Ch", c(1:12), sep = "_"))
+  
+ggsave(filename= "Output//Figs/WTC_Chamber_SoilMoistureDepths.pdf", plot = ChMoistDifDep, width = 6, height = 6)
+
 
 
 ###############
 # Temperature #
 ###############
 # surface temperature
+## Temp trt ##
 ToTemp <- PltTemp(data = subset(soilTrtSmry, variable == "SoilTemp10"),
                   ylab = expression(Soil~temperature~at~10~cm~(~degree~C)))
 ggsave(filename= "Output//Figs/WTC_SoilTemp10cm.pdf", plot = ToTemp, width = 6, height = 3)
