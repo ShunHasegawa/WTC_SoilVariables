@@ -71,11 +71,11 @@ ylab_label <- function(variable, value){
 ######################
 # plot soil moisture #
 ######################
-PltMoist <- function(data, ylab){
+PltMoist <- function(data, ylab, vals, legtitle, leglabel, colvar, ...){
   data <- droplevels(data)
-  p <- ggplot(data, aes(x = Date, y = Mean, col = temp))
-  p + geom_line()+
-    scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
+  p <- ggplot(data, aes_string(x = "Date", y = "Mean", col = colvar))
+  p + geom_line(...)+
+    scale_color_manual(values = vals, name = legtitle, labels = leglabel) +
     labs(x = "Time", y = ylab)
 }
 
