@@ -73,6 +73,7 @@ ylab_label <- function(variable, value){
 ######################
 PltMoist <- function(data, ylab, vals, legtitle, leglabel, colvar, ...){
   data <- droplevels(data)
+  data[, "Mean"] <- data[, "Mean"] * 100
   p <- ggplot(data, aes_string(x = "Date", y = "Mean", col = colvar))
   p + geom_line(...)+
     scale_color_manual(values = vals, name = legtitle, labels = leglabel) +
