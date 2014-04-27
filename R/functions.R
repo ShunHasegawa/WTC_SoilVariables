@@ -93,3 +93,16 @@ PltTemp <- function(data, ylab, ...){
     scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
     labs(x = "Time", y = ylab)
 }
+
+##########################################
+# plot soil temperature at chamber level #
+##########################################
+PltChTemp <- function(data, FaceLab = NULL){
+  data <- droplevels(data)
+  if(!is.null(FaceLab)) data$variable <- factor(data$variable, labels = FaceLab)
+  data$temp <- factor(data$temp, labels = c("Ambient", "eTemp"))
+  p <- ggplot(data, aes(x = Date, y = Mean, col = Chamber))
+  p + geom_line(size = 0.3) +
+    scale_color_manual(values = palette(), "Chamber", labels = paste("Ch", c(1:12), sep = "_")) +
+    labs(x = "Time", y = expression(Soil~temperature~at~10~cm~(~degree~C)))
+}

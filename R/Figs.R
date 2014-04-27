@@ -75,7 +75,7 @@ ggsave(filename= "Output//Figs/WTC_Chamber_SoilMoistureDepths.pdf", plot = ChMoi
 ## Temp trt ##
 ToTemp <- PltTemp(data = subset(soilTrtSmry, variable == "SoilTemp10"),
                   ylab = expression(Soil~temperature~at~10~cm~(~degree~C)))
-ggsave(filename= "Output//Figs/WTC_SoilTemp10cm.pdf", plot = ToTemp, width = 6, height = 3)
+ggsave(filename= "Output//Figs/WTC_Trt_SoilTemp10cm.pdf", plot = ToTemp, width = 6, height = 3)
 
 # stratified temperature
 TempDifDep <- PltTemp(data = soilTrtSmry[grep("^Temp", soilTrtSmry$variable), ],
@@ -83,3 +83,19 @@ TempDifDep <- PltTemp(data = soilTrtSmry[grep("^Temp", soilTrtSmry$variable), ],
   facet_wrap(~variable, ncol = 2) +
   theme(axis.text.x = element_text(size = 6))
 ggsave(filename= "Output//Figs/WTC_SoilTmpDepths.pdf", plot = TempDifDep, width = 6, height = 6)  
+
+## Chamber ##
+# top layer
+ChTopTemp <-  PltChTemp(subset(soilChmSmry, variable == "SoilTemp10")) +
+  facet_grid( .~temp, ) +
+  guides(color = guide_legend(keyheight = 0.8)) +
+  theme(axis.text.x = element_text(size = 6))
+
+ggsave(filename= "Output//Figs/WTC_Chamber_SoilTemp10cm.pdf", plot = ChTopTemp, width = 6, height = 3)
+
+# different layers
+ChDifDepTemp <- PltChTemp(data = soilChmSmry[grep("^Temp", soilChmSmry$variable), ],
+                          FaceLab = paste(c(5, 10, 20, 30, 50, 100), "cm")) +
+  facet_grid(variable ~ temp) +
+  theme(axis.text.x = element_text(size = 6))
+ggsave(filename= "Output//Figs/WTC_Chamber_SoilTempDepths.pdf", plot = ChDifDepTemp, width = 6, height = 8)
