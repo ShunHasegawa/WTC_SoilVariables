@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+library/
+OldScript/
+Output/
+Data/
+*.pdf/
+*.RData
