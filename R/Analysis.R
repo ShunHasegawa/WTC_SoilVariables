@@ -1,10 +1,8 @@
 rm(list=ls(all=TRUE))
 
-library(devtools)
 library(HIEv)
 library(plyr)
 library(reshape)
-library(packrat)
 library(ggplot2)
 library(gmodels)
 library(car)
