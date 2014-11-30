@@ -1,14 +1,6 @@
 rm(list=ls(all=TRUE))
 
-library(HIEv)
-library(plyr)
-library(reshape)
-library(ggplot2)
-library(gmodels)
-library(car)
-library(lubridate)
-library(dplyr)
-
+source("R/packages.R")
 source("R/functions.R")
 
 ##################################
