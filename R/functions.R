@@ -127,3 +127,19 @@ ggsavePP <- function(filename, plot, width, height){
          height = height, 
          dpi = 600)
 }
+
+#########################
+# droplevels and subset #
+#########################
+subsetD <- function(...) droplevels(subset(...))
+
+#####################
+# Create summary df #
+#####################
+SmmryDF <- function(data, variable){
+  yval <- data[, variable]
+  Mean <- mean(yval, na.rm = TRUE)
+  SE <- ci(yval, na.rm = TRUE)[4]
+  N <- sum(!is.na(yval))
+  data.frame(Mean, SE, N)
+}
