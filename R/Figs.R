@@ -87,10 +87,12 @@ poster_theme <- theme(panel.grid.major = element_blank(),
 
 ## line graph
 ToTemp <- PltTemp(data = subset(soilTrtSmry, variable == "SoilTemp10"),
-                  ylab = expression(Soil~temperature~at~10~cm~(~degree~C))) +
-  poster_theme
+                  ylab = expression((~degree~C))) +
+  ggtitle(expression(Soil~temperature~at~10~cm))+
+  poster_theme +
+  theme(plot.title = element_text(size = 25))
 ggsavePP(filename= "Output//Figs/BES_Presentation/WTC_Trt_SoilTemp10cm", 
-         plot = ToTemp, width = 5, height = 3)
+         plot = ToTemp, width = 5, height = 4)
 
 ## bargarph
 # data to compute annual mean
