@@ -89,11 +89,8 @@ PltMoist <- function(data, ylab, vals, legtitle, leglabel, colvar, ...){
 #########################
 PltTemp <- function(data, ylab, ...){
   data <- droplevels(data)
-  p <- ggplot(data, aes(x = Date, y = Mean, col = temp, fill = temp))
+  p <- ggplot(data, aes(x = Date, y = Mean, col = temp))
   p + geom_line(...)+
-    geom_ribbon(aes(ymin = Min, ymax = Max), 
-                col = NA, alpha = 0.2) + # col=NA removes the border lines
-    scale_fill_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
     scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
     scale_x_date(breaks= date_breaks("1 month"), 
                  labels = date_format("%b-%y"),

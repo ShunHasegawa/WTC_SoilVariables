@@ -78,6 +78,20 @@ ToTemp <- PltTemp(data = subset(soilTrtSmry, variable == "SoilTemp10"),
                   ylab = expression(Soil~temperature~at~10~cm~(~degree~C)))
 ggsavePP(filename= "Output//Figs/WTC_Trt_SoilTemp10cm", plot = ToTemp, width = 6, height = 3)
 
+########################
+# Fig for presentation #
+########################
+poster_theme <- theme(panel.grid.major = element_blank(),
+                      panel.grid.minor = element_blank(),
+                      legend.position = "non")
+
+ToTemp <- PltTemp(data = subset(soilTrtSmry, variable == "SoilTemp10"),
+                  ylab = expression(Soil~temperature~at~10~cm~(~degree~C))) +
+  poster_theme
+ggsavePP(filename= "Output//Figs/BES_Presentation/WTC_Trt_SoilTemp10cm", 
+         plot = ToTemp, width = 5, height = 3)
+
+
 # stratified temperature
 TempDifDep <- PltTemp(data = soilTrtSmry[grep("^Temp", soilTrtSmry$variable), ],
                       ylab = expression(Soil~temperature~(~degree~C)), size = 0.1) +
