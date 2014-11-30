@@ -106,3 +106,19 @@ PltChTemp <- function(data, FaceLab = NULL){
     scale_color_manual(values = palette(), "Chamber", labels = paste("Ch", c(1:12), sep = "_")) +
     labs(x = "Time", y = expression(Soil~temperature~at~10~cm~(~degree~C)))
 }
+
+##############################
+# Save ggplot in PDF and PNG #
+##############################
+ggsavePP <- function(filename, plot, width, height){
+  ggsave(filename = paste(filename, ".pdf", sep = ""), 
+         plot = plot, 
+         width = width, 
+         height = height)
+  
+  ggsave(filename = paste(filename, ".png", sep = ""), 
+         plot = plot, 
+         width = width, 
+         height = height, 
+         dpi = 600)
+}
