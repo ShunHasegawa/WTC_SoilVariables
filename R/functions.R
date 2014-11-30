@@ -91,7 +91,11 @@ PltTemp <- function(data, ylab, ...){
                 col = NA, alpha = 0.2) + # col=NA removes the border lines
     scale_fill_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
     scale_color_manual(values = c("blue", "red"), "Temp trt", labels = c("Ambient", "eTemp")) +
-    labs(x = "Time", y = ylab)
+    scale_x_date(breaks= date_breaks("1 month"), 
+                 labels = date_format("%b-%y"),
+                 limits = as.Date(c("2013-2-1", "2014-2-15"))) +
+    theme(axis.text.x  = element_text(angle=45, vjust= 1, hjust = 1)) +
+    labs(x = "Month", y= ylab)
 }
 
 ##########################################
