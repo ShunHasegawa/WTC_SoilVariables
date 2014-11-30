@@ -85,14 +85,43 @@ poster_theme <- theme(panel.grid.major = element_blank(),
                       panel.grid.minor = element_blank(),
                       legend.position = "non")
 
+## line graph
 ToTemp <- PltTemp(data = subset(soilTrtSmry, variable == "SoilTemp10"),
                   ylab = expression(Soil~temperature~at~10~cm~(~degree~C))) +
   poster_theme
 ggsavePP(filename= "Output//Figs/BES_Presentation/WTC_Trt_SoilTemp10cm", 
          plot = ToTemp, width = 5, height = 3)
 
+## bargarph
+# data to compute annual mean
+df <- subset(soilChmSmry, variable == "SoilTemp10" & 
+                Date >= as.Date("2013-2-1") &
+                Date <= as.Date("2014-2-15"))
+# annual chamber mean
+AnnChMean <- ddply(df, .(temp, Chamber), function(x) SmmryDF(x, variable = "Mean"))
 
-# stratified temperature
+# annual temp mean
+AnnTempMean <- ddply(AnnChMean, .(temp), function(x) SmmryDF(x, variable = "Mean"))
+
+# create a fig
+p <- ggplot(data = AnnTempMean, aes(x = temp, y = Mean, fill = temp))
+p2 <- p + geom_bar(stat = "identity") + 
+  geom_errorbar(aes(ymin = Mean - SE, ymax = Mean + SE), 
+                width = .5) + 
+  scale_fill_manual(values = c("blue", "red")) +
+  poster_theme +
+  scale_y_continuous(limits=c(16, 22), oob = rescale_none) +
+  labs(x = NULL, y = NULL) +
+  geom_text(aes(x = temp, y = Mean + SE, label = round(Mean, 1)), vjust = -.5) +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) + 
+  ggtitle("Annual mean")
+ggsavePP(filename= "Output//Figs/BES_Presentation/WTC_Trt_SoilTemp10cm_AnnualMean", 
+         plot = p2, width = 2, height = 2)
+
+##########################
+# stratified temperature #
+##########################
 TempDifDep <- PltTemp(data = soilTrtSmry[grep("^Temp", soilTrtSmry$variable), ],
                       ylab = expression(Soil~temperature~(~degree~C)), size = 0.1) +
   facet_wrap(~variable, ncol = 2) +
