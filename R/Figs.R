@@ -92,7 +92,7 @@ ToTemp <- PltTemp(data = subset(soilTrtSmry, variable == "SoilTemp10"),
   poster_theme +
   theme(plot.title = element_text(size = 25))
 ggsavePP(filename= "Output//Figs/BES_Presentation/WTC_Trt_SoilTemp10cm", 
-         plot = ToTemp, width = 5, height = 4)
+         plot = ToTemp, width = 5, height = 3)
 
 ## bargarph
 # data to compute annual mean
