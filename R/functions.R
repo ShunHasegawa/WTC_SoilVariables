@@ -77,7 +77,11 @@ PltMoist <- function(data, ylab, vals, legtitle, leglabel, colvar, ...){
   p <- ggplot(data, aes_string(x = "Date", y = "Mean", col = colvar))
   p + geom_line(...)+
     scale_color_manual(values = vals, name = legtitle, labels = leglabel) +
-    labs(x = "Time", y = ylab)
+    scale_x_date(breaks= date_breaks("1 month"), 
+                 labels = date_format("%b-%y"),
+                 limits = as.Date(c("2013-2-1", "2014-2-15"))) +
+    theme(axis.text.x  = element_text(angle=45, vjust= 1, hjust = 1, size = 6)) +
+    labs(x = "Month", y = ylab)
 }
 
 #########################
