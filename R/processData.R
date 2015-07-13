@@ -1,5 +1,5 @@
 # download up to date files from HIEv
-setToken("wSoiD4s3UDMzxwdNhzmG ")
+setToken(tokenfile = "Data/token.txt")
 allsoils <- downloadTOA5("WTC.._Table1",cachefile="Data/hievdata/tmp.RData",
                          topath="Data/hievdata/row_data", maxnfiles = 300)
 pr_allsoils <- PrcsDat(allsoils)
