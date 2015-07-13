@@ -6,7 +6,7 @@ source("R/functions.R")
 ##################################
 # download and process HIEv date #
 ##################################
-source("R//processData.R")
+# source("R//processData.R")
 
 ########################### 
 #Daily Chamber & Trt mean #
@@ -18,13 +18,23 @@ soilmlt <- melt(soilRowMean, id = c("DateTime", "Date", "RECORD", "Source", "Cha
 
 summary(soilmlt)
 
-soilChmSmry <- soilmlt %.% 
-  group_by(Date, Chamber, temp, variable) %.%
+soilChmSmry <- soilmlt %>% 
+  group_by(Date, Chamber, temp, variable) %>%
   summarise(Mean = mean(value, na.rm = TRUE),
             Min = min(value, na.rm = TRUE),
             Max = max(value, na.rm = TRUE))
 save(soilChmSmry, file = "Output/Data/WTC_soilMoistTemp_Chamber_DailySummary.RData")
-soilTrtSmry <- ddply(soilChmSmry, .(Date, temp, variable), function(x) colMeans(x[,c("Mean", "Min", "Max")], na.rm = TRUE))
+
+soilTrtSmry <- soilChmSmry %>%
+  group_by(Date, temp, variable) %>%
+  select(Mean, Min, Max) %>%
+  summarise(lci = ci(Mean, na.rm = TRUE)[2],
+            uci = ci(Mean, na.rm = TRUE)[3],
+            N = sum(!is.na(Mean)),
+            Mean = mean(Mean, na.rm = TRUE),
+            Min = mean(Min, na.rm = TRUE),
+            Max = mean(Max, na.rm = TRUE))
+soilTrtSmry
 save(soilTrtSmry, file = "Output/Data/WTC_soilMoistTemp_TempTrt_DailySummary.RData")
 
 load("Output/Data/WTC_soilMoistTemp_Chamber_DailySummary.RData")
