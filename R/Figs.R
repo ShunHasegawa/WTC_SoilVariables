@@ -1,3 +1,15 @@
+# Plot theme
+science_theme <- theme(panel.border = element_rect(color = "black"),
+                       panel.grid.major = element_blank(),
+                       panel.grid.minor = element_blank(),
+                       axis.text.x  = element_text(angle=45, vjust= 1, hjust = 1),
+                       axis.ticks.length = unit(-.2, "lines"),
+                       axis.ticks.margin = unit(.5, "lines"),
+                       legend.title = element_blank(),
+                       legend.key.width = unit(2.5, "lines"),
+                       legend.key = element_blank(),
+                       legend.background = element_rect(fill = "transparent", colour = NA))
+
 unique(soilTrtSmry$variable)
 
 palette(c("blue2", "goldenrod1", "firebrick2", "chartreuse4", "deepskyblue1", "darkorange1", 
@@ -146,3 +158,29 @@ ChDifDepTemp <- PltChTemp(data = soilChmSmry[grep("^Temp", soilChmSmry$variable)
   theme(axis.text.x = element_text(size = 6)) +
   guides(color = guide_legend(override.aes = list(size = 1)))
 ggsavePP(filename= "Output//Figs/WTC_Chamber_SoilTempDepths", plot = ChDifDepTemp, width = 6, height = 8)
+
+######################
+# Fig for manuscript #
+######################
+dd <- filter(soilTrtSmry, variable %in% c("SoilTemp10", "SoilVW_5_25") & Date <= as.Date("2014-2-15"))
+dd[dd$variable ==  "SoilVW_5_25", c("Mean", "lci", "uci")] <- 
+  apply(dd[dd$variable ==  "SoilVW_5_25", c("Mean", "lci", "uci")], 2,
+        function(x) x * 100)
+
+dd$variable <- factor(dd$variable, levels = c("SoilVW_5_25", "SoilTemp10"),
+                      labels = c("Soil~moisture*~('%')", "Soil~temperature~(degree*C)"))
+p <- ggplot(dd, aes(x = Date, y = Mean, col = temp))
+p2 <- p + 
+  geom_line() +
+  geom_ribbon(aes(x = Date, ymin = lci, ymax = uci, fill = temp), col = NA, alpha = .4) +
+  facet_grid(variable ~ ., scales = "free_y", labeller = label_parsed)+
+  scale_color_manual(values = c("blue", "red"), labels = c("Ambient", "eTemp")) +
+  scale_fill_manual(values = c("blue", "red"), labels = c("Ambient", "eTemp")) +
+  scale_x_date(breaks= date_breaks("3 month"), 
+               labels = date_format("%b-%y"),
+               limits = as.Date(c("2013-2-1", "2014-2-15"))) +
+  science_theme +
+  theme(legend.position = c(.15, .9)) +
+  labs(x = NULL, y = NULL)
+p2
+ggsavePP(plot = p2, filename = "Output/Figs/Manuscript/WTC_SoilVariable", width = 5, height = 4)
